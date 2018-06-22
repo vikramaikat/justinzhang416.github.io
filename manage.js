@@ -3,6 +3,7 @@ function Player(name, attr, year){
 	this.name = name;
 	this.attr = attr;
   	this.year = year;
+  	this.improvements = {};
 }
 function Team(name, totalRating, w, l){
   this.name  = name;
@@ -11,11 +12,18 @@ function Team(name, totalRating, w, l){
   this.l = l;
 }
 
+// Updates the stats of players after season.
+// TODO: Take into account player's work ethic.
 function updatePlayers(){
 	let newRoster = []
+	let choices = ["shooting","handle","defense","rebounding"];
 	for(player of players){
 		if(player.year != 4){
-			player.attr["shooting"] += 1;
+			player.improvements = {};
+			let choice = choices[Math.floor(Math.random() * choices.length)];
+			player.attr[choice] += 1;
+			player.improvements[choice] = true;
+			player.year += 1;
 			newRoster.push(player);
 		}
 	}
@@ -23,17 +31,19 @@ function updatePlayers(){
 }
 
 function playGame(t1,t2){
+	
 	var firstScore = Math.floor(Math.random() * t1.totalRating + .2* t1.totalRating);
 	var secondScore = Math.floor(Math.random() * t2.totalRating + .2*t2.totalRating);
-
+	let result = t1.name + ": " + firstScore + ", " + t2.name + ": " + secondScore;
 	if(firstScore > secondScore){
-		t1.w ++
-		t2.l++
+		t1.w++;
+		t2.l++;
 	}
 	else{
-		t1.l++
-		t2.w++
+		t1.l++;
+		t2.w++;
 	}
+	return result;
 }
 
 function generatePlayerTable(){
@@ -43,8 +53,15 @@ function generatePlayerTable(){
 	for(player of players){
 		let row = "<tr>"
 		row += "<td>"+ player.name +"</td>";
+		console.log(player.improvements);
 		for(let key in player.attr){
-			row += "<td>"+ player.attr[key] + "</td>";
+			console.log(key);
+			if(key in player.improvements){
+				row += "<td><b>"+ player.attr[key] + "*</b></td>";
+			}
+			else{
+				row += "<td>"+ player.attr[key] + "</td>";
+			}
 		}
 		row += "</tr>"
 		str = str + row;
@@ -55,7 +72,6 @@ function generatePlayerTable(){
 }
 
 function generateRecruits(){
-
 	let str = `<form action="/handleRecruits" method="post">`;
 	recruits = [];
 	for(let i = 0; i <= 7; i++){
@@ -98,6 +114,5 @@ function generateStandings(){
 		str = str + row;
 	}
 	str = str + "</table>";
-	console.log(str);
 	return str;
 }
