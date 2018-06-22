@@ -1,6 +1,14 @@
+// Global variables D:
 let players;
 let recruits;
 let teams;
+
+// Global variables needed for round robin tourney
+let temp;
+let day;
+let numDays; // Days needed to complete tournament
+let halfSize;
+let teamsSize;
 
 
 $(document).ready(function(){
@@ -11,6 +19,7 @@ $(document).ready(function(){
     	)
 });
 
+// Initialize players and teams
 function startGame(){
 	players = new Array();
 	players.push(new Player("Joel Berry", {"shooting":8,"handle":7,"defense":5,"rebounding":3,"ethic":6},2));
@@ -29,6 +38,7 @@ function startGame(){
     teams.push(new Team("NC State", 70,0,0));
     teams.push(new Team("Syracuse", 75,0,0));
 
+    // TODO: Actually calculate rating from players. 
     let yourTeam = new Team("UNC",100,0,0);
     teams.push(yourTeam);
 
@@ -45,6 +55,7 @@ function recruitScreen(){
     	`</div>`
     	);
 
+    // When form submitted, handle here
     $('form').on('submit', function(e) { //use on if jQuery 1.7+
         e.preventDefault();  //prevent form from submitting
         let data = $("form :input").serializeArray();
@@ -57,11 +68,6 @@ function recruitScreen(){
     });
 }
 
-let temp;
-let day;
-let numDays; // Days needed to complete tournament
-let halfSize;
-let teamsSize;
 
 function initSeason(){
 	temp = new Array();
@@ -115,13 +121,12 @@ function playGames(){
 		var firstTeam = temp[(day + idx) % teamsSize];
 		var secondTeam = temp[(day  + teamsSize - idx) % teamsSize];
         scores += "<p>" + playGame(firstTeam, secondTeam) + "<p>" ;
-		
 	}
 	day++;
 
     $(".scores").html(scores);
     $(".standings").html(generateStandings());
-    if(numDays < day){
+    if(numDays == day){
         $(".page-continue").html(`<button onclick='endSeason()'>Season Done</button>`);
     }
 
