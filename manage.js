@@ -2,14 +2,23 @@
 function Player(name, attr, year){
 	this.name = name;
 	this.attr = attr;
+	var sum = 0
+	for(let key in this.attr){
+		sum += this.attr[key]
+	}
+	this.avg = sum / 5.0
   	this.year = year;
   	this.improvements = {};
 }
+
 function Team(name, totalRating, w, l){
   this.name  = name;
   this.totalRating = totalRating;
   this.w = w;
   this.l = l;
+}
+function avgAttr(attr){
+
 }
 
 // Updates the stats of players after season.
@@ -40,7 +49,7 @@ function updatePlayers(){
 	players = newRoster;
 }
 
-// Plays game between two teams, return result as string. 
+// Plays game between two teams, return result as string.
 // TODO: Improve shitty ass algorithm
 function playGame(t1,t2){
 	var firstScore = Math.floor(Math.random() * t1.totalRating + .2* t1.totalRating);
@@ -60,26 +69,30 @@ function playGame(t1,t2){
 // Generates HTML table of players
 function generatePlayerTable(){
 	let str = "<table>";
-	let header = "<tr><th>Name</th><th>Shooting</th><th>Handle</th><th>Defense</th><th>Rebounding</th><th>Ethic</th></tr>";
+	let header = "<tr><th>Name</th><th>Shooting</th><th>Handle</th><th>Defense</th><th>Rebounding</th><th>Ethic</th><th>AVG</th><th>Year</th></tr>";
 	str = str + header;
 
 	for(player of players){
 		let row = "<tr>"
 		row += "<td>"+ player.name +"</td>";
 		for(let key in player.attr){
-			// If improved over past season, give it a star. 
+			// If improved over past season, give it a star.
 			if(key in player.improvements){
 				row += "<td><b>"+ player.attr[key] + "*</b></td>";
 			}
 			else{
 				row += "<td>"+ player.attr[key] + "</td>";
 			}
-			// Wipe the improvement
-			player.improvements = {}
+
 		}
+		row += "<td>"+ player.avg + "</td>"
+		// Wipe the improvement
+		player.improvements = {}
+		row += "<td>"+ player.year + "</td>"
 		row += "</tr>"
 		str = str + row;
 	}
+
 	str = str + "</table>";
 	return str;
 }
@@ -94,12 +107,12 @@ function generateRecruits(){
 	for(let i = 0; i <= 7; i++){
 		let r = new Player(i, {"shooting":Math.floor(Math.random() * 10 + 1),"handle":Math.floor(Math.random() * 10 + 1),
 			"defense":Math.floor(Math.random() * 10 + 1),"rebounding":Math.floor(Math.random() * 10 + 1),
-			"ethic":Math.floor(Math.random() * 10 + 1)},0);
+			"ethic":Math.floor(Math.random() * 10 + 1)},1);
 		recruits.push(r);
 	}
 	str = str + "<table>"
 
-	let header = "<tr><th>Name</th><th>Shooting</th><th>Handle</th><th>Defense</th><th>Rebounding</th><th>Ethic</th><th>Recruit?</th></tr>";
+	let header = "<tr><th>Name</th><th>Shooting</th><th>Handle</th><th>Defense</th><th>Rebounding</th><th>Ethic</th><th>AVG</th><th>Recruit?</th></tr>";
 	str = str + header;
 	for(let i = 0; i <= 7; i++){
 		r = recruits[i];
@@ -108,6 +121,7 @@ function generateRecruits(){
 		for(let key in r.attr){
 			row += "<td>"+ r.attr[key] + "</td>";
 		}
+		row += "<td>"+ r.avg + "</td>";
 		// Right, keeping tracking of recruits by index in global variable.
 		row += `<td> <input type="checkbox" name="recruit" value=`+ i + `> </td>`;
 		row += "</tr>";
